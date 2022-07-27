@@ -52,12 +52,19 @@ export default function Authenticated({ header, children }) {
                         </div>
 
                         <div className="hidden sm:flex sm:items-center sm:ml-6">
-                            <div className="ml-3 relative">
+                            <div className="flex ml-3 w-40">
+
+                                <div className="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                                    <NavLink href={route('profile')} active={route().current('profile')}>
+                                        Profile
+                                    </NavLink>
+                                </div>
+
                                 <Link
                                     href={route('logout')}
                                     method="post"
                                     as="button"
-                                    className="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
+                                    className="block w-full px-2 py-2 text-center text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out"
                                 >
                                     Log Out
                                 </Link>

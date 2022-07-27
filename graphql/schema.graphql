@@ -35,6 +35,13 @@ type Sms {
     meta: Json
 }
 
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+}
+
 type Query {
     transactions: [Transaction!]!
         @paginate(defaultCount: 25)
@@ -53,6 +60,7 @@ type Query {
     sms: [Sms!]!
         @paginate(defaultCount: 100)
         @orderBy(column: transaction_id direction: ASC)
+    me:User @auth
 
     totalIncome(range: String!): Json
     totalExpenses(range: String!): Json
@@ -103,4 +111,9 @@ type Mutation {
     createSms(body: String!): [Sms]
     updateSms(id: ID! body: String!): Sms
     deleteSms(id: ID!): Sms @delete
+    updateUser(
+        id: ID!
+        name: String!
+        password: String!
+    ): User @update
 }
