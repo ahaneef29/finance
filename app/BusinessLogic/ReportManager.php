@@ -13,7 +13,7 @@ class ReportManager implements ReportManagerContract
 {
     protected $data = [];
 
-    public function generate() 
+    public function generate()
     {
         $newBrands = Brand::whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->pluck('name');
 
@@ -22,14 +22,13 @@ class ReportManager implements ReportManagerContract
 
         $this->addSection('Overview', $this->getOverviewData());
 
-        foreach(Category::all() as $category)
-        {
+        foreach (Category::all() as $category) {
             $brandsData = [];
 
-            foreach($category->brands as $brand) {
+            foreach ($category->brands as $brand) {
                 $totalCurrentMonth = $brand->transactions()->whereBetween('created_at', [$currentMonthRange->start(), $currentMonthRange->end()])->sum('amount');
                 $totalLastMonth = $brand->transactions()->whereBetween('created_at', [$lastMonthRange->start(), $lastMonthRange->end()])->sum('amount');
-                $change = ! $totalLastMonth ? '-' : number_format(($totalCurrentMonth / $totalLastMonth - 1) * 100, 2);
+                $change = !$totalLastMonth ? '-' : number_format(($totalCurrentMonth / $totalLastMonth - 1) * 100, 2);
 
                 $brandsData[] = [
                     'name' => $brand->name,
@@ -54,11 +53,11 @@ class ReportManager implements ReportManagerContract
 
     protected function splitBrandListIntoPages($brandsData, $category)
     {
-        if(count(array_chunk($brandsData, 25)) > 1) {
-            foreach(array_chunk($brandsData, 25) as $index => $chunk) {
+        if (count(array_chunk($brandsData, 25)) > 1) {
+            foreach (array_chunk($brandsData, 25) as $index => $chunk) {
                 $this->addSection($category->name . "-" . $index + 1, $chunk);
             }
-        }else {
+        } else {
             $this->addSection($category->name, $brandsData);
         }
     }
@@ -70,11 +69,11 @@ class ReportManager implements ReportManagerContract
 
     protected function getChangeColor($change, $type)
     {
-        if($change == '-') {
+        if ($change == '-') {
             return 'gray';
         }
 
-        if($type == Category::INCOME) {
+        if ($type == Category::INCOME) {
             return $change >= 0 ? 'green' : 'red';
         }
 
@@ -95,7 +94,7 @@ class ReportManager implements ReportManagerContract
             return $carry;
         });
 
-        $change = ! $allLastMonth ? '-' : number_format(($allCurrentMonth / $allLastMonth - 1) * 100, 2);
+        $change = !$allLastMonth ? '-' : number_format(($allCurrentMonth / $allLastMonth - 1) * 100, 2);
 
         return array_merge([[
             'name' => 'All',
@@ -112,6 +111,8 @@ class ReportManager implements ReportManagerContract
             $this->getTotalCash(),
             $this->getTotalIncome(),
             $this->getTotalExpenses(),
+            $this->getTotalInvestment(),
+            $this->getTotalSavings(),
         ];
     }
 
@@ -119,15 +120,19 @@ class ReportManager implements ReportManagerContract
     {
         $totalIncome = Transaction::income()->sum('amount');
         $totalExpenses = Transaction::expenses()->sum('amount');
-        
+        $totalInvestment = Transaction::investment()->sum('amount');
+        $totalSavings = Transaction::savings()->sum('amount');
+
         $totalIncomeExcludingThisMonth = Transaction::income()->where('created_at', '<', now()->startOfMonth())->sum('amount');
         $totalExpensesExcludingThisMonth = Transaction::expenses()->where('created_at', '<', now()->startOfMonth())->sum('amount');
-        
-        $totalCashTillNow = $totalIncome - $totalExpenses;
-        $totalCashExcludingThisMonth = $totalIncomeExcludingThisMonth - $totalExpensesExcludingThisMonth;
+        $totalInvestmentExcludingThisMonth = Transaction::investment()->where('created_at', '<', now()->startOfMonth())->sum('amount');
+        $totalSavingsExcludingThisMonth = Transaction::savings()->where('created_at', '<', now()->startOfMonth())->sum('amount');
 
-        $change = ! $totalCashExcludingThisMonth ? '-' : number_format(($totalCashTillNow / $totalCashExcludingThisMonth - 1) * 100, 2);
-        
+        $totalCashTillNow = $totalIncome - ($totalExpenses + $totalInvestment + $totalSavings);
+        $totalCashExcludingThisMonth = $totalIncomeExcludingThisMonth - ($totalExpensesExcludingThisMonth + $totalInvestmentExcludingThisMonth + $totalSavingsExcludingThisMonth);
+
+        $change = !$totalCashExcludingThisMonth ? '-' : number_format(($totalCashTillNow / $totalCashExcludingThisMonth - 1) * 100, 2);
+
         return [
             'name' => 'Total Cash',
             'total_current_month' => $totalCashTillNow,
@@ -141,9 +146,9 @@ class ReportManager implements ReportManagerContract
     {
         $total = Transaction::income()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
         $totalExcludingThisMonth = Transaction::income()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
-        $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
+        $change = !$totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
+
         return [
             'name' => 'Total Income',
             'total_current_month' => $total,
@@ -157,15 +162,47 @@ class ReportManager implements ReportManagerContract
     {
         $total = Transaction::expenses()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
         $totalExcludingThisMonth = Transaction::expenses()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
-        
-        $change = ! $totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
-        
+
+        $change = !$totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
+
         return [
             'name' => 'Total Expenses',
             'total_current_month' => $total,
             'total_previous_month' => $totalExcludingThisMonth,
             'change' => $change,
             'change_color' => $this->getChangeColor($change, 'EXPENSES')
+        ];
+    }
+
+    protected function getTotalInvestment()
+    {
+        $total = Transaction::investment()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
+        $totalExcludingThisMonth = Transaction::investment()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
+
+        $change = !$totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
+
+        return [
+            'name' => 'Total Investment',
+            'total_current_month' => $total,
+            'total_previous_month' => $totalExcludingThisMonth,
+            'change' => $change,
+            'change_color' => $this->getChangeColor($change, 'INCOME')
+        ];
+    }
+
+    protected function getTotalSavings()
+    {
+        $total = Transaction::savings()->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])->sum('amount');
+        $totalExcludingThisMonth = Transaction::savings()->whereBetween('created_at', [now()->subMonthNoOverflow()->startOfMonth(), now()->subMonthNoOverflow()->endOfMonth()])->sum('amount');
+
+        $change = !$totalExcludingThisMonth ? '-' : number_format(($total / $totalExcludingThisMonth - 1) * 100, 2);
+
+        return [
+            'name' => 'Total Savings',
+            'total_current_month' => $total,
+            'total_previous_month' => $totalExcludingThisMonth,
+            'change' => $change,
+            'change_color' => $this->getChangeColor($change, 'INCOME')
         ];
     }
 }
