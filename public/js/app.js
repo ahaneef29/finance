@@ -2291,7 +2291,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "createSms": () => (/* reexport safe */ _sms_js__WEBPACK_IMPORTED_MODULE_4__.createSms),
 /* harmony export */   "getSms": () => (/* reexport safe */ _sms_js__WEBPACK_IMPORTED_MODULE_4__.getSms),
 /* harmony export */   "updateSms": () => (/* reexport safe */ _sms_js__WEBPACK_IMPORTED_MODULE_4__.updateSms),
-/* harmony export */   "getAuthenticatedUser": () => (/* reexport safe */ _user_js__WEBPACK_IMPORTED_MODULE_5__.getAuthenticatedUser)
+/* harmony export */   "getAuthenticatedUser": () => (/* reexport safe */ _user_js__WEBPACK_IMPORTED_MODULE_5__.getAuthenticatedUser),
+/* harmony export */   "updateName": () => (/* reexport safe */ _user_js__WEBPACK_IMPORTED_MODULE_5__.updateName),
+/* harmony export */   "updateUserPassword": () => (/* reexport safe */ _user_js__WEBPACK_IMPORTED_MODULE_5__.updateUserPassword)
 /* harmony export */ });
 /* harmony import */ var _common_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./common.js */ "./resources/js/Api/common.js");
 /* harmony import */ var _categories_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./categories.js */ "./resources/js/Api/categories.js");
@@ -2395,11 +2397,13 @@ var updateTransaction = function updateTransaction(_ref2) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getAuthenticatedUser": () => (/* binding */ getAuthenticatedUser)
+/* harmony export */   "getAuthenticatedUser": () => (/* binding */ getAuthenticatedUser),
+/* harmony export */   "updateName": () => (/* binding */ updateName),
+/* harmony export */   "updateUserPassword": () => (/* binding */ updateUserPassword)
 /* harmony export */ });
 /* harmony import */ var _urql_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @urql/core */ "./node_modules/@urql/core/dist/urql-core.mjs");
 /* harmony import */ var _client_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./client.js */ "./resources/js/Api/client.js");
-var _templateObject;
+var _templateObject, _templateObject2, _templateObject3;
 
 function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -2407,6 +2411,22 @@ function _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(
 
 var getAuthenticatedUser = function getAuthenticatedUser() {
   return _client_js__WEBPACK_IMPORTED_MODULE_0__["default"].query((0,_urql_core__WEBPACK_IMPORTED_MODULE_1__.gql)(_templateObject || (_templateObject = _taggedTemplateLiteral(["\n        query {\n            me {\n                id\n                name\n                email\n            }\n        }\n    "])))).toPromise();
+};
+var updateName = function updateName(_ref) {
+  var id = _ref.id,
+      name = _ref.name,
+      email = _ref.email,
+      password = _ref.password,
+      confirmPassword = _ref.confirmPassword;
+  return _client_js__WEBPACK_IMPORTED_MODULE_0__["default"].mutation((0,_urql_core__WEBPACK_IMPORTED_MODULE_1__.gql)(_templateObject2 || (_templateObject2 = _taggedTemplateLiteral(["\n            mutation {\n                updateName(id: ", " name: \"\"\"", "\"\"\") {\n                    id\n                    name\n                }\n            }\n        "])), id, name)).toPromise();
+};
+var updateUserPassword = function updateUserPassword(_ref2) {
+  var id = _ref2.id,
+      name = _ref2.name,
+      email = _ref2.email,
+      password = _ref2.password,
+      confirmPassword = _ref2.confirmPassword;
+  return _client_js__WEBPACK_IMPORTED_MODULE_0__["default"].mutation((0,_urql_core__WEBPACK_IMPORTED_MODULE_1__.gql)(_templateObject3 || (_templateObject3 = _taggedTemplateLiteral(["\n            mutation {\n                updatePassword(id: ", " password: \"\"\"", "\"\"\") {\n                    id\n                    password\n                }\n            }\n        "])), id, password)).toPromise();
 };
 
 /***/ }),
@@ -6953,46 +6973,109 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function Index(_ref) {
   var auth = _ref.auth;
 
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('kkkkk'),
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0),
       _useState2 = _slicedToArray(_useState, 2),
-      name = _useState2[0],
-      setName = _useState2[1];
+      id = _useState2[0],
+      setId = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(),
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
       _useState4 = _slicedToArray(_useState3, 2),
-      email = _useState4[0],
-      setEmail = _useState4[1];
+      name = _useState4[0],
+      setName = _useState4[1];
 
   var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(),
       _useState6 = _slicedToArray(_useState5, 2),
-      password = _useState6[0],
-      setPassword = _useState6[1];
+      email = _useState6[0],
+      setEmail = _useState6[1];
 
   var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(),
       _useState8 = _slicedToArray(_useState7, 2),
-      confirmPassword = _useState8[0],
-      setConfirmPassword = _useState8[1];
+      password = _useState8[0],
+      setPassword = _useState8[1];
 
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(),
       _useState10 = _slicedToArray(_useState9, 2),
-      loading = _useState10[0],
-      setLoading = _useState10[1];
+      confirmPassword = _useState10[0],
+      setConfirmPassword = _useState10[1];
+
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState12 = _slicedToArray(_useState11, 2),
+      isPasswordValid = _useState12[0],
+      setIsPasswordValid = _useState12[1];
+
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState14 = _slicedToArray(_useState13, 2),
+      loading = _useState14[0],
+      setLoading = _useState14[1];
+
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState16 = _slicedToArray(_useState15, 2),
+      nameFeedBack = _useState16[0],
+      setNameFeedBack = _useState16[1];
+
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState18 = _slicedToArray(_useState17, 2),
+      passwordFeedBack = _useState18[0],
+      setPasswordFeedBack = _useState18[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     setLoading(true);
     (0,_Api__WEBPACK_IMPORTED_MODULE_6__.getAuthenticatedUser)().then(function (_ref2) {
       var data = _ref2.data;
-      console.log(data.me);
+      setId(data.me.id);
       setName(data.me.name);
       setEmail(data.me.email);
       setLoading(false);
     })["catch"](console.error);
   }, []);
 
-  var update = function update() {
-    setLoading(true);
-    console.log(name, email, password, confirmPassword);
-    setLoading(false);
+  var updateProfileName = function updateProfileName() {
+    console.log(name, email);
+    (0,_Api__WEBPACK_IMPORTED_MODULE_6__.updateName)({
+      id: id,
+      name: name
+    }).then(function (_ref3) {
+      var value = _ref3.value;
+      console.log("value:", value);
+      showFeedBack('name');
+    })["catch"](console.error);
+  };
+
+  var updateProfilePassword = function updateProfilePassword() {
+    console.log(password, confirmPassword);
+
+    if (password !== confirmPassword) {
+      setIsPasswordValid(true);
+      alert("Passwords do not match");
+      return;
+    }
+
+    (0,_Api__WEBPACK_IMPORTED_MODULE_6__.updateUserPassword)({
+      id: id,
+      password: password
+    }).then(function (_ref4) {
+      var value = _ref4.value;
+      showFeedBack('password');
+      setIsPasswordValid(false);
+      setPassword('');
+      setConfirmPassword('');
+    })["catch"](console.error);
+  };
+
+  var showFeedBack = function showFeedBack(type) {
+    if (type === 'name') {
+      setNameFeedBack(true);
+    } else if (type === 'password') {
+      setPasswordFeedBack(true);
+    } else {
+      setNameFeedBack(false);
+      setPasswordFeedBack(false);
+    }
+
+    setTimeout(function () {
+      setNameFeedBack(false);
+      setPasswordFeedBack(false);
+    }, 2000);
   };
 
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)(_Layouts_Authenticated__WEBPACK_IMPORTED_MODULE_4__["default"], {
@@ -7008,15 +7091,15 @@ function Index(_ref) {
       title: "Profile"
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
       className: "py-12",
-      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
         className: "max-w-7xl mx-auto sm:px-6 lg:px-8",
-        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
           className: "flex flex-row py-2 sm:px-6",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
-            className: "w-1/3",
-            children: "User Details"
+            className: "w-1/3 hidden md:block",
+            children: "Update Name"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
-            className: "w-2/3 bg-white space-x-8 space-y-8 shadow sm:rounded-lg",
+            className: "md:w-2/3 bg-white space-x-8 space-y-8 shadow sm:rounded-lg",
             children: !loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
               className: "flex flex-col space-y-5 p-5 w-full",
               children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
@@ -7053,6 +7136,30 @@ function Index(_ref) {
                   })]
                 })]
               }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+                className: "flex  flex-row-reverse space-x-6 w-full",
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
+                  onClick: function onClick() {
+                    return updateProfileName();
+                  },
+                  className: "inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150",
+                  children: "Update"
+                }), nameFeedBack && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+                  className: "text-green-600 p-2 text-sm",
+                  children: "Name updated successfully"
+                })]
+              })]
+            })
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+          className: "flex flex-row py-2 sm:px-6",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+            className: "w-1/3 hidden md:block",
+            children: "Update Password"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+            className: "md:w-2/3 bg-white space-x-8 space-y-8 shadow sm:rounded-lg",
+            children: !loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
+              className: "flex flex-col space-y-5 p-5 w-full",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "flex flex-row space-x-6 w-full",
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "flex-1",
@@ -7067,6 +7174,9 @@ function Index(_ref) {
                     handleChange: function handleChange(e) {
                       return setPassword(e.target.value);
                     }
+                  }), !isPasswordValid || password == '' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+                    className: "text-red-400 pt-1 text-sm",
+                    children: "Password is required"
                   })]
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                   className: "flex-1",
@@ -7081,21 +7191,27 @@ function Index(_ref) {
                     handleChange: function handleChange(e) {
                       setConfirmPassword(e.target.value);
                     }
+                  }), isPasswordValid && password != confirmPassword && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+                    className: "text-red-400 pt-1 text-sm",
+                    children: "Confirm password do NOT match!"
                   })]
                 })]
-              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("div", {
+              }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsxs)("div", {
                 className: "flex  flex-row-reverse space-x-6 w-full",
-                children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("button", {
                   onClick: function onClick() {
-                    return update();
+                    return updateProfilePassword();
                   },
                   className: "inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest active:bg-blue-500 transition ease-in-out duration-150",
-                  children: "Update Profile"
-                })
+                  children: "Update"
+                }), passwordFeedBack && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_7__.jsx)("p", {
+                  className: "text-green-600 p-2 text-sm",
+                  children: "Password updated successfully"
+                })]
               })]
             })
           })]
-        })
+        })]
       })
     })]
   });

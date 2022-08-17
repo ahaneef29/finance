@@ -14,3 +14,29 @@ export const getAuthenticatedUser = () => {
     `)
     .toPromise();
 }
+
+export const updateName = ({id, name, email, password, confirmPassword}) => {
+    return client
+        .mutation(gql`
+            mutation {
+                updateName(id: ${id} name: """${name}""") {
+                    id
+                    name
+                }
+            }
+        `)
+    .toPromise();
+}
+
+export const updateUserPassword = ({id, name, email, password, confirmPassword}) => {
+    return client
+        .mutation(gql`
+            mutation {
+                updatePassword(id: ${id} password: """${password}""") {
+                    id
+                    password
+                }
+            }
+        `)
+    .toPromise();
+}
